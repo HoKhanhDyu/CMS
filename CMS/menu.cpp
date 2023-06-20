@@ -4,6 +4,40 @@
 string nowYear = "2023";
 int nowSem = 2;
 
+Class* chonLop() {
+	List<Class> l = clsInYear(nowYear);
+	int t = 0;
+	Node<Class>* tm = l.head;
+	while (tm != NULL) {
+		cout << t++ << ". " << tm->data.id;
+		tm = tm->next;
+	}
+	cout << "Nhap chi so cua lop can chon: ";
+	int k;
+	cin >> k;
+	tm = l.head;
+	k--;
+	while (k--) tm = tm->next;
+	return &(tm->data);
+}
+
+Subject* chonMon() {
+	List<Subject> l = sjInSem(nowYear,nowSem);
+	int t = 0;
+	Node<Subject>* tm = l.head;
+	while (tm != NULL) {
+		cout << t++ << ". " << tm->data.id;
+		tm = tm->next;
+	}
+	cout << "Nhap chi so cua mon can chon: ";
+	int k;
+	cin >> k;
+	tm = l.head;
+	k--;
+	while (k--) tm = tm->next;
+	return &(tm->data);
+}
+
 void themNamHoc() {
 	string year;
 	cout << "Nhap nam can tao: ";
@@ -55,6 +89,87 @@ void themMonHoc() {
 
 }
 
+Student getAStudent() {
+	Student tm;
+	string sex;
+	cout << "Nhap ho sinh vien: ";
+	getline(cin, tm.firstName);
+	cout << "Nhap ten sinh vien: ";
+	getline(cin, tm.lastName);
+	cout << "Nhap id sinh vien: ";
+	getline(cin, tm.id);
+	cout << "Nhap gioi tinh sinh vien (Nam/Nu): ";
+	getline(cin, sex);
+	tm.sex = (sex == "Nam") ? 0 : 1;
+	cout << "Nhap ngay sinh sinh vien (dd/mm/yyyy): ";
+	getline(cin, tm.birth);
+	return tm;
+}
+
+void svToCls() {
+	cout << "Chon lop can them" << endl;
+	Class* cls = chonLop();
+	cout << "Nhap thong tin tin vien can them: " << endl;
+	Student st = getAStudent();
+	add1StToCls(*cls, st);
+}
+
+void svToSj() {
+	cout << "Chon mon can them" << endl;
+	Subject* sj = chonMon();
+	cout << "Nhap thong tin tin vien can them: " << endl;
+	Student st = getAStudent();
+	add1StToSj(*sj, st);
+}
+
+void fileToCls() {
+	cout << "Chon lop can them" << endl;
+	Class* cls = chonLop();
+	string path;
+	cout << "Nhap dia chi file data: ";
+	getline(cin, path);
+	addDsSvToCls(*cls, path);
+}
+
+void fileToSJ() {
+	cout << "Chon mon can them" << endl;
+	Subject* sj = chonMon();
+	string path;
+	cout << "Nhap dia chi file data: ";
+	getline(cin, path);
+	addDsSvToSJ(*sj, path);
+}
+
+void menu_themSinhVien() {
+	int k;
+	system("cls");
+	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
+	printf("1.Them 1 sinh vien vao lop\n");
+	printf("2.Nhap danh sach sinh vien cho lop\n");
+	printf("3.Them 1 sinh vien vao mon hoc\n");
+	printf("4.Nhap danh sach sinh vien cho mon hoc\n");
+	printf("0.Thoat\n");
+	printf("Nhap lua chon: ");
+	cin >> k;
+	switch (k) {
+	case 1:
+		svToCls();
+		break;
+	case 2:
+		svToSj();
+		break;
+	case 3:
+		fileToCls();
+		break;
+	case 4:
+		fileToSJ();
+		break;
+	case 0:
+		return;
+	}
+	menu_themSinhVien();
+}
+
 void menu_new() {
 	int k;
 	system("cls");
@@ -82,12 +197,60 @@ void menu_new() {
 		themMonHoc();
 		break;
 	case 5:
-		//menu_themSinhVien();
+		menu_themSinhVien();
 		break;
 	case 0:
 		return;
 	}
 	menu_new();
+}
+
+void xem_lop() {
+	cout << "Chon lop can xem" << endl;
+	Class* cls = chonLop();
+	system("cls");
+	Node<grade>* tm = cls->allSt.head;
+	while (tm != NULL) {
+		cout << tm->data.idx;
+		Student t = tm->data.st;
+		printf("%3d|%10s|%20s|%9s|%5s|%10s|%s\n", t.idx, t.id.c_str(), t.firstName.c_str(), t.lastName.c_str(), t.sex == 0 ? "Nam" : "Nu", t.cccd.c_str(), t.className.c_str());
+		tm = tm->next;
+	}
+}
+
+void xem_mon() {
+	cout << "Chon mon can them" << endl;
+	Subject* sj = chonMon();
+	system("cls");
+	Node<grade>* tm = sj->allSt.head;
+	while (tm != NULL) {
+		cout << tm->data.idx;
+		Student t = tm->data.st;
+		printf("%3d|%10s|%20s|%9s|%5s|%10s|%s\n", t.idx, t.id.c_str(), t.firstName.c_str(), t.lastName.c_str(), t.sex == 0 ? "Nam" : "Nu", t.cccd.c_str(), t.className.c_str());
+		tm = tm->next;
+	}
+}
+
+void menu_view() {
+	int k;
+	system("cls");
+	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
+	printf("1.Lop hoc\n");
+	printf("2.Mon hoc\n");
+	printf("0.Thoat\n");
+	printf("Nhap lua chon: ");
+	cin >> k;
+	switch (k) {
+	case 1:
+		xem_lop();
+		break;
+	case 2:
+		xem_mon();
+		break;
+	case 0:
+		return;
+	}
+	menu_view();
 }
 
 void menu() {
@@ -104,6 +267,9 @@ void menu() {
 	switch (k) {
 	case 1:
 		menu_new();
+		break;
+	case 2:
+		menu_view();
 		break;
 	case 0:
 		return;

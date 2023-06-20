@@ -1,5 +1,10 @@
 #pragma once
+//#include<bits/stdc++.h>
+#include<direct.h>
 #include<iostream>
+#include<fstream>
+#include <sstream>
+#include <filesystem>
 
 using namespace std;
 
@@ -66,7 +71,12 @@ struct schoolYear {
 void addYear(string year);
 void addSem(string year, int sem, Semester s);
 void addClass(string year, Class cls);
-
+List<Class> clsInYear(string year);
+void add1StToCls(Class& cls, Student st);
+void add1StToSj(Subject& sj, Student st);
+List<Subject> sjInSem(string year, int sem);
+void addDsSvToCls(Class& cls, string path);
+void addDsSvToSJ(Subject& sj, string path);
 
 
 void check();

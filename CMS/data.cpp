@@ -93,9 +93,6 @@ List<grade> gradeStFromFile(string path) {
 			string sex;
 			char k;
 			stringstream s(line);
-			s >> g.st.idx;
-			getline(s, g.st.id, ',');
-			getline(s, g.st.id, ',');
 			getline(s, g.st.firstName, ',');
 			getline(s, g.st.lastName, ',');
 			getline(s, sex, ',');
@@ -130,17 +127,136 @@ void addDsSvToSJ(Subject& sj, string path) {
 	}
 }
 
-void load_data() {
-
+void createFolder(string name) {
+	_mkdir(name.c_str());
 }
 
-void createFolder(string name) {
-	_mkdir(("hihi/"+name).c_str());
+void gradeToCSV(string path, List<grade> s) {
+	ofstream fo(path);
+	Node<grade>* tm = s.head;
+	while (tm != NULL) {
+		fo << tm->data.idx << ",";
+		fo << tm->data.st.id << ",";
+		fo << tm->data.st.firstName << ",";
+		fo << tm->data.st.lastName << ",";
+		fo << tm->data.st.className << ",";
+		fo << tm->data.st.cccd << ",";
+		fo << tm->data.st.age << ",";
+		fo << tm->data.st.address << ",";
+		fo << tm->data.st.birth << ",";
+		fo << tm->data.st.sex << ",";
+		fo << tm->data.st.pass << endl;
+		tm = tm->next;
+	}
+	fo.close();
+}
+
+void ghiClass(string path, List<Class> l) {
+	Node<Class>* tm = l.head;
+	createFolder(path + "/class");
+	path = path + "/class";
+	while (tm != NULL) {
+		gradeToCSV(path + "/" + tm->data.id + ".csv", tm->data.allSt);
+		tm = tm->next;
+	}
+}
+
+void inFolder() {
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind;
+
+	LPCWSTR a = L"data/*.*";
+
+	hFind = FindFirstFile(a, &FindFileData);
+	while (FindNextFile(hFind, &FindFileData)) {
+		wstring ws(FindFileData.cFileName);
+		string s(ws.begin(), ws.end());
+		cout << s << endl;
+	}
+}
+
+
+
+void ghiSem(string path, Semester sem) {
+	createFolder(path);
+	ofstream fo(path + "info.csv");
+	fo << sem.begin << "," << sem.end << endl;
+	Node<Subject>* tm = sem.sj.head;
+	while (tm!=NULL)
+	{
+		fo << tm->data.id << ",";
+		fo << tm->data.course_name << ",";
+		fo << tm->data.class_name << ",";
+		fo << tm->data.time << ",";
+		fo << tm->data.session << ",";
+		fo << tm->data.lecName << ",";
+		fo << tm->data.amount << ",";
+		fo << tm->data.credits << endl;
+		gradeToCSV(path+"/"+tm->data.id+".csv", tm->data.allSt);
+		tm = tm->next;
+	}
 }
 
 void save_data() {
 	Node<schoolYear>* tm = hcmus.head;
-	while (tm != NULL) {
-		path pathObj(folderPath);
+	string path = "data";
+	createFolder(path);
+	while (tm!= NULL) {
+		path = path + "/" + tm->data.year;
+		createFolder(path + "/" + tm->data.year);
+		ghiClass(path + "/" + tm->data.year, tm->data.cls);
+		for (int i = 1; i <= 3; i++) {
+			if (tm->data.smt[i].open) {
+				ghiSem(path,tm->data.smt[i]);
+			}
+		}
+		tm = tm->next;
+	}
+}
+
+
+
+//hello, my name is Nhan6+
+LPCWSTR toL(string s) {
+	LPCWSTR tm = wstring(s.begin(), s.end()).c_str();
+	return tm;
+}
+
+string toS(wchar_t* s) {
+	wstring ws(s);
+	string tm(ws.begin(),ws.end());
+	return tm;
+}
+
+void load_sem(string path) {
+
+}
+
+void load_year(string path) {
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind;
+
+	hFind = FindFirstFile(toL(path), &FindFileData);
+	while (FindNextFile(hFind, &FindFileData)) {
+		string name = toS(FindFileData.cFileName);
+		if (name != "..") {
+			if (name[0] == 's') load_sem(path + "/" + name);
+			else load_cls(path + "/class");
+		}
+	}
+}
+
+void load_data() {
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind;
+
+	string path = "data/*.*";
+
+	hFind = FindFirstFile(toL(path), &FindFileData);
+	while (FindNextFile(hFind, &FindFileData)) {
+		string name = toS(FindFileData.cFileName);
+		if (name != "..") {
+			load_year(path + "/" + name);
+		}
 	}
 }

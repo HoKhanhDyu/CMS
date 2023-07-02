@@ -205,31 +205,9 @@ void menu_new() {
 	menu_new();
 }
 
-void xem_lop() {
-	cout << "Chon lop can xem" << endl;
-	Class* cls = chonLop();
-	system("cls");
-	Node<grade>* tm = cls->allSt.head;
-	while (tm != NULL) {
-		cout << tm->data.idx;
-		Student t = tm->data.st;
-		printf("%3d|%10s|%20s|%9s|%5s|%10s|%s\n", t.idx, t.id.c_str(), t.firstName.c_str(), t.lastName.c_str(), t.sex == 0 ? "Nam" : "Nu", t.cccd.c_str(), t.className.c_str());
-		tm = tm->next;
-	}
-}
 
-void xem_mon() {
-	cout << "Chon mon can them" << endl;
-	Subject* sj = chonMon();
-	system("cls");
-	Node<grade>* tm = sj->allSt.head;
-	while (tm != NULL) {
-		cout << tm->data.idx;
-		Student t = tm->data.st;
-		printf("%3d|%10s|%20s|%9s|%5s|%10s|%s\n", t.idx, t.id.c_str(), t.firstName.c_str(), t.lastName.c_str(), t.sex == 0 ? "Nam" : "Nu", t.cccd.c_str(), t.className.c_str());
-		tm = tm->next;
-	}
-}
+
+
 
 void menu_view() {
 	int k;
@@ -242,10 +220,10 @@ void menu_view() {
 	cin >> k;
 	switch (k) {
 	case 1:
-		xem_lop();
+		//xem_lop();
 		break;
 	case 2:
-		xem_mon();
+		//xem_mon();
 		break;
 	case 0:
 		return;

@@ -1,6 +1,8 @@
 #include"menu.h"
+#include"data.h"
 
 int main() {
-	menu();
+	//menu();
+	load_data();
 	return 0;
 }

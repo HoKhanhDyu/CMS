@@ -1,10 +1,13 @@
 #pragma once
 //#include<bits/stdc++.h>
+
 #include<direct.h>
 #include<iostream>
 #include<fstream>
+#include <windows.h>
 #include <sstream>
-#include <filesystem>
+#include <stdio.h>
+#include <tchar.h>
 
 using namespace std;
 
@@ -24,7 +27,6 @@ struct List
 
 struct Student
 {
-	int idx;
 	string firstName, lastName, id, address, className, pass, cccd;
 	int age, sex;
 	string birth;
@@ -77,6 +79,6 @@ void add1StToSj(Subject& sj, Student st);
 List<Subject> sjInSem(string year, int sem);
 void addDsSvToCls(Class& cls, string path);
 void addDsSvToSJ(Subject& sj, string path);
-
+void load_data();
 
 void check();

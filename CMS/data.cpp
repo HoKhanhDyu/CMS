@@ -104,6 +104,7 @@ List<grade> gradeStFromFile(string path) {
 			addToList<grade>(tm, g);
 		}
 	}
+	fp.close();
 	return tm;
 }
 
@@ -155,27 +156,14 @@ void ghiClass(string path, List<Class> l) {
 	Node<Class>* tm = l.head;
 	createFolder(path + "/class");
 	path = path + "/class";
+	ofstream fo(path + "infoCls.csv");
 	while (tm != NULL) {
+		fo << tm->data.id << endl;
 		gradeToCSV(path + "/" + tm->data.id + ".csv", tm->data.allSt);
 		tm = tm->next;
 	}
+	fo.close();
 }
-
-void inFolder() {
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind;
-
-	LPCWSTR a = L"data/*.*";
-
-	hFind = FindFirstFile(a, &FindFileData);
-	while (FindNextFile(hFind, &FindFileData)) {
-		wstring ws(FindFileData.cFileName);
-		string s(ws.begin(), ws.end());
-		cout << s << endl;
-	}
-}
-
-
 
 void ghiSem(string path, Semester sem) {
 	createFolder(path);
@@ -195,6 +183,7 @@ void ghiSem(string path, Semester sem) {
 		gradeToCSV(path+"/"+tm->data.id+".csv", tm->data.allSt);
 		tm = tm->next;
 	}
+	fo.close();
 }
 
 void save_data() {
@@ -228,8 +217,32 @@ string toS(wchar_t* s) {
 	return tm;
 }
 
-void load_sem(string path) {
+bool load_sem(string path) {
+	ifstream fi(path + "/info.csv");
+	if (fi.is_open()) {
+		string line;
+		getline(fi, line);
+		while (getline(fi, line)) {
+			Semester sem;
+			stringstream s(line);
+			getline(s, sem.begin, ',');
+			getline(s, sem.end, ',');
+		}
+		fi.close();
+		return true;
+	}
+	return false;
+}
 
+void load_cls(string path,List<Class> &l) {
+	ifstream fi(path + "/infoCls.csv");
+	while (!fi.eof()) {
+		Class cls;
+		fi >> cls.id;
+		cls.allSt = gradeStFromFile(path + "/" + cls.id + ".csv");
+		addToList<Class>(l, cls);
+	}
+	fi.close();
 }
 
 void load_year(string path) {

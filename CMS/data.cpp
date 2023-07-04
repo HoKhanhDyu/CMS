@@ -84,26 +84,34 @@ void add1StToSj(Subject &sj, Student st) {
 
 List<grade> gradeStFromFile(string path) {
 	ifstream fp(path);
+	cout << path;
 	List<grade> tm;
 	if (fp.is_open()) {
+		cout << "baaaaaa";
 		string line;
-		getline(fp, line);
 		while (getline(fp, line)) {
+			cout << "hi";
 			grade g;
 			string sex;
 			char k;
 			stringstream s(line);
+			if(s.tellp()==0)
+			getline(s, g.idx, ',');
+			getline(s, g.st.id, ',');
 			getline(s, g.st.firstName, ',');
 			getline(s, g.st.lastName, ',');
-			getline(s, sex, ',');
-			getline(s, g.st.birth, ',');
-			getline(s, g.st.cccd, ',');
 			getline(s, g.st.className, ',');
-			getline(s, g.st.pass, ',');
+			getline(s, g.st.cccd, ',');
+			s >> g.st.age>>k;
+			getline(s, g.st.address, ',');
+			getline(s, g.st.birth, ',');
+			getline(s, sex, ',');
+			getline(s, g.st.pass, '\n');
 			g.st.sex = (sex == "Nam") ? 0 : 1;
 			addToList<grade>(tm, g);
 		}
 	}
+//	cout << tm.head->data.st.firstName;
 	fp.close();
 	return tm;
 }
@@ -156,7 +164,7 @@ void ghiClass(string path, List<Class> l) {
 	Node<Class>* tm = l.head;
 	createFolder(path + "/class");
 	path = path + "/class";
-	ofstream fo(path + "infoCls.csv");
+	ofstream fo(path + "/infoCls.csv");
 	while (tm != NULL) {
 		fo << tm->data.id << endl;
 		gradeToCSV(path + "/" + tm->data.id + ".csv", tm->data.allSt);
@@ -167,7 +175,7 @@ void ghiClass(string path, List<Class> l) {
 
 void ghiSem(string path, Semester sem) {
 	createFolder(path);
-	ofstream fo(path + "info.csv");
+	ofstream fo(path + "/info.csv");
 	fo << sem.begin << "," << sem.end << endl;
 	Node<Subject>* tm = sem.sj.head;
 	while (tm!=NULL)
@@ -191,85 +199,134 @@ void save_data() {
 	string path = "data";
 	createFolder(path);
 	while (tm!= NULL) {
-		path = path + "/" + tm->data.year;
+		//path = path + "/" + tm->data.year;
+		//cout << tm->data.year << endl;
 		createFolder(path + "/" + tm->data.year);
 		ghiClass(path + "/" + tm->data.year, tm->data.cls);
 		for (int i = 1; i <= 3; i++) {
 			if (tm->data.smt[i].open) {
-				ghiSem(path,tm->data.smt[i]);
+				ghiSem(path + "/" + tm->data.year +"/sem"+(char)(i+48), tm->data.smt[i]);
 			}
 		}
 		tm = tm->next;
 	}
+	cout << "daluu";
 }
 
 
 
 //hello, my name is Nhan6+
-LPCWSTR toL(string s) {
-	LPCWSTR tm = wstring(s.begin(), s.end()).c_str();
-	return tm;
+
+
+Semester load_sem(string path) {
+	Semester sem;
+	sem.open = false;
+	ifstream fi(path + "/info.csv");
+	cout << path << endl;
+	if (fi.is_open()) {
+		cout << "hi";
+		sem.open = true;
+		string line;
+		getline(fi, line);
+		stringstream s(line);
+		getline(s, sem.begin, ',');
+		getline(s, sem.end, '\n');
+		while (getline(fi, line)) {
+			stringstream s(line);
+			Subject sj;
+			getline(s, sj.id, ',');
+			getline(s, sj.course_name, ',');
+			getline(s, sj.class_name, ',');
+			getline(s, sj.time, ',');
+			getline(s, sj.session, ',');
+			getline(s, sj.lecName, ',');
+			s >> sj.amount;
+			char tm;
+			s >> tm;
+			s >> sj.credits;
+			sj.allSt = gradeStFromFile(path+"/"+sj.id+".csv");
+		}
+		fi.close();
+	}
+	return sem;
 }
 
 string toS(wchar_t* s) {
 	wstring ws(s);
-	string tm(ws.begin(),ws.end());
+	string tm(ws.begin(), ws.end());
 	return tm;
-}
-
-bool load_sem(string path) {
-	ifstream fi(path + "/info.csv");
-	if (fi.is_open()) {
-		string line;
-		getline(fi, line);
-		while (getline(fi, line)) {
-			Semester sem;
-			stringstream s(line);
-			getline(s, sem.begin, ',');
-			getline(s, sem.end, ',');
-		}
-		fi.close();
-		return true;
-	}
-	return false;
 }
 
 void load_cls(string path,List<Class> &l) {
 	ifstream fi(path + "/infoCls.csv");
+	if (fi.fail()) cout << path;
 	while (!fi.eof()) {
 		Class cls;
-		fi >> cls.id;
+		getline(fi, cls.id);
+		cout << cls.id << endl;
+		//int h;
+		//cin >> h;
 		cls.allSt = gradeStFromFile(path + "/" + cls.id + ".csv");
-		addToList<Class>(l, cls);
+		if(cls.id!="")addToList<Class>(l, cls);
 	}
 	fi.close();
 }
 
-void load_year(string path) {
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind;
-
-	hFind = FindFirstFile(toL(path), &FindFileData);
-	while (FindNextFile(hFind, &FindFileData)) {
-		string name = toS(FindFileData.cFileName);
-		if (name != "..") {
-			if (name[0] == 's') load_sem(path + "/" + name);
-			else load_cls(path + "/class");
-		}
+void load_year(string path,string year) {
+	schoolYear sc;
+	sc.year = year;
+	for (char i = '1'; i <= '3'; i++) {
+		sc.smt[i - 48] = load_sem(path + "/sem" + i);
+		cout << sc.smt[i - 48].open << endl;
 	}
+	cout << "hi";
+	load_cls(path + "/class",sc.cls);
+	addToList<schoolYear>(hcmus, sc);
 }
+
+
 
 void load_data() {
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind;
 
-	string path = "data/*.*";
-
-	hFind = FindFirstFile(toL(path), &FindFileData);
+	string path = "data";
+	string pa = path + "/*.*";
+	wstring ws(pa.begin(), pa.end());
+	LPCWSTR k = ws.c_str();	
+	hFind = FindFirstFile(k, &FindFileData);
+	wstring ws1(FindFileData.cFileName);
+	string s(ws1.begin(), ws1.end());
+	cout << s << endl;
 	while (FindNextFile(hFind, &FindFileData)) {
 		string name = toS(FindFileData.cFileName);
 		if (name != "..") {
-			load_year(path + "/" + name);
+			cout << name << endl;
+			load_year(path + "/" + name,name);
 		}
 	}
+}
+
+void getnew(string &year,int &sem) {
+	int t = 0;
+	sem = 0;
+	schoolYear sc;
+	Node<schoolYear>* tm = hcmus.head;
+	while (tm != NULL) {
+		cout << tm->data.year << endl;
+		if (t < stoi(tm->data.year)) {
+			t = stoi(tm->data.year);
+			sc = tm->data;
+		}
+		tm = tm->next;
+	}
+	year = to_string(t);
+	cout << year;
+	system("pause");
+	for(int i=3;i>=1;i--)
+		if (sc.smt[i].open) {
+			sem = i;
+			return;
+		}
+	return;
 }

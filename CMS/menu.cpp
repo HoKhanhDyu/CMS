@@ -9,12 +9,13 @@ Class* chonLop() {
 	int t = 0;
 	Node<Class>* tm = l.head;
 	while (tm != NULL) {
-		cout << t++ << ". " << tm->data.id;
+		cout << ++t << ". " << tm->data.id<<endl;
 		tm = tm->next;
 	}
 	cout << "Nhap chi so cua lop can chon: ";
 	int k;
 	cin >> k;
+	cin.ignore();
 	tm = l.head;
 	k--;
 	while (k--) tm = tm->next;
@@ -26,12 +27,13 @@ Subject* chonMon() {
 	int t = 0;
 	Node<Subject>* tm = l.head;
 	while (tm != NULL) {
-		cout << t++ << ". " << tm->data.id;
+		cout << ++t << ". " << tm->data.id<<endl;
 		tm = tm->next;
 	}
 	cout << "Nhap chi so cua mon can chon: ";
 	int k;
 	cin >> k;
+	cin.ignore();
 	tm = l.head;
 	k--;
 	while (k--) tm = tm->next;
@@ -82,11 +84,12 @@ void themMonHoc() {
 	cin >> tm.credits;
 	cout << "Nhap so luong sinh vien toi da: ";
 	cin >> tm.amount;
+	cin.ignore();
 	cout << "Nhap ngay hoc trong tuan: ";
 	getline(cin, tm.time);
 	cout << "Nhap buoi hoc: ";
 	getline(cin, tm.session);
-
+	addSubject(nowYear, nowSem, tm);
 }
 
 Student getAStudent() {
@@ -145,8 +148,8 @@ void menu_themSinhVien() {
 	system("cls");
 	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
 	printf("1.Them 1 sinh vien vao lop\n");
-	printf("2.Nhap danh sach sinh vien cho lop\n");
-	printf("3.Them 1 sinh vien vao mon hoc\n");
+	printf("2.Them 1 sinh vien vao mon hoc\n");
+	printf("3.Nhap danh sach sinh vien cho lop\n");
 	printf("4.Nhap danh sach sinh vien cho mon hoc\n");
 	printf("0.Thoat\n");
 	printf("Nhap lua chon: ");
@@ -182,6 +185,7 @@ void menu_new() {
 	printf("0.Thoat\n");
 	printf("Nhap lua chon: ");
 	cin >> k;
+	cin.ignore();
 	switch (k) {
 	case 1:
 		themNamHoc();
@@ -205,7 +209,33 @@ void menu_new() {
 	menu_new();
 }
 
+void xem_lop() {
+	cout << "Chon lop can xem" << endl;
+	Class* cls = chonLop();
+	system("cls");
+	cout << "Danh sach lop " << cls->id << endl;
+	Node<grade>* tm = cls->allSt.head;
+	int k = 0;
+	while (tm != NULL) {
+		cout << ++k << ". " << tm->data.st.lastName<<endl;
+		tm = tm->next;
+	}
+	system("pause");
+}
 
+void xem_mon() {
+	cout << "Chon mon can xem" << endl;
+	Subject* sj = chonMon();
+	system("cls");
+	cout << "Danh sach lop " << sj->course_name << endl;
+	Node<grade>* tm = sj->allSt.head;
+	int k = 0;
+	while (tm != NULL) {
+		cout << ++k << ". " << tm->data.st.lastName << endl;
+		tm = tm->next;
+	}
+	system("pause");
+}
 
 
 
@@ -220,10 +250,10 @@ void menu_view() {
 	cin >> k;
 	switch (k) {
 	case 1:
-		//xem_lop();
+		xem_lop();
 		break;
 	case 2:
-		//xem_mon();
+		xem_mon();
 		break;
 	case 0:
 		return;
@@ -232,6 +262,7 @@ void menu_view() {
 }
 
 void menu() {
+	getnew(nowYear, nowSem);
 	int k;
 	system("cls");
 	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;

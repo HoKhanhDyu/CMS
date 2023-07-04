@@ -40,7 +40,7 @@ struct Lecturer
 };
 
 struct grade {
-	int idx;
+	string idx;
 	Student st;
 	double GPA, MP, FP, OP;
 };
@@ -73,6 +73,7 @@ struct schoolYear {
 void addYear(string year);
 void addSem(string year, int sem, Semester s);
 void addClass(string year, Class cls);
+void addSubject(string year, int sem, Subject sj);
 List<Class> clsInYear(string year);
 void add1StToCls(Class& cls, Student st);
 void add1StToSj(Subject& sj, Student st);
@@ -80,5 +81,7 @@ List<Subject> sjInSem(string year, int sem);
 void addDsSvToCls(Class& cls, string path);
 void addDsSvToSJ(Subject& sj, string path);
 void load_data();
+void save_data();
+void getnew(string& year, int& sem);
 
 void check();

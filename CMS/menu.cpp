@@ -238,7 +238,6 @@ void xem_mon() {
 }
 
 
-
 void menu_view() {
 	int k;
 	system("cls");
@@ -259,6 +258,16 @@ void menu_view() {
 		return;
 	}
 	menu_view();
+}
+
+void xuatCSV() {
+	cout << "Chon mon can xuat:" << endl;
+	Subject* sj = chonMon();
+	system("cls");
+	cout << "Chon vi tri luu:";
+	string path;
+	getline(cin, path);
+	gradeToCSV(path + "/" + sj->id+".csv", sj->allSt);
 }
 
 void menu() {

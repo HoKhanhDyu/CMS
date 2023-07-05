@@ -143,8 +143,9 @@ void createFolder(string name) {
 void gradeToCSV(string path, List<grade> s) {
 	ofstream fo(path);
 	Node<grade>* tm = s.head;
+	int t = 0;
 	while (tm != NULL) {
-		fo << tm->data.idx << ",";
+		fo << ++t << ",";
 		fo << tm->data.st.id << ",";
 		fo << tm->data.st.firstName << ",";
 		fo << tm->data.st.lastName << ",";
@@ -329,4 +330,8 @@ void getnew(string &year,int &sem) {
 			return;
 		}
 	return;
+}
+
+void createCSV(Subject sj, string path) {
+
 }

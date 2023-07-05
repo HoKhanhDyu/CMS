@@ -270,6 +270,15 @@ void xuatCSV() {
 	gradeToCSV(path + "/" + sj->id+".csv", sj->allSt);
 }
 
+void capnhatdiem() {
+	cout << "Chon mon can nhap" << endl;
+	Subject* sj = chonMon();
+	cout << "Nhap dia chi cua file";
+	string path;
+	getline(cin, path);
+	sj->allSt = gradeStFromFile(path);
+}
+
 void menu() {
 	getnew(nowYear, nowSem);
 	int k;
@@ -288,6 +297,12 @@ void menu() {
 		break;
 	case 2:
 		menu_view();
+		break;
+	case 3:
+		xuatCSV();
+		break;
+	case 4:
+		capnhatdiem();
 		break;
 	case 0:
 		return;

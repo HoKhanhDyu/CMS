@@ -84,5 +84,6 @@ void load_data();
 void save_data();
 void getnew(string& year, int& sem);
 void gradeToCSV(string path, List<grade> s);
+List<grade> gradeStFromFile(string path);
 
 void check();

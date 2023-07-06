@@ -1,8 +1,29 @@
 #include"menu.h"
 #include"data.h"
+#include <conio.h>
 
 string nowYear = "2023";
 int nowSem = 2;
+
+int choose(const char* ten, const char* a[], int n) {
+	int ch = 0;
+	while (true) {
+		system("cls");
+		cout << ten << endl << endl;
+		for (int i = 0; i < n; i++) {
+			if (i == ch) cout << ">>" << a[i] << endl;
+			else cout << "  " << a[i] << endl;
+		}
+		char k = _getch();
+		if (k == 80) {
+			ch = (ch + 1) % n;
+		}
+		if (k == 72) {
+			ch = (ch + n - 1) % n;
+		}
+		if (k == 13) return ch;
+	}
+}
 
 Class* chonLop() {
 	List<Class> l = clsInYear(nowYear);
@@ -147,13 +168,14 @@ void menu_themSinhVien() {
 	int k;
 	system("cls");
 	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
-	printf("1.Them 1 sinh vien vao lop\n");
-	printf("2.Them 1 sinh vien vao mon hoc\n");
-	printf("3.Nhap danh sach sinh vien cho lop\n");
-	printf("4.Nhap danh sach sinh vien cho mon hoc\n");
-	printf("0.Thoat\n");
-	printf("Nhap lua chon: ");
-	cin >> k;
+	const char* a[] = {
+	"1.Them 1 sinh vien vao lop",
+	"2.Them 1 sinh vien vao mon hoc",
+	"3.Nhap danh sach sinh vien cho lop",
+	"4.Nhap danh sach sinh vien cho mon hoc",
+	"0.Thoat"
+	};
+	k=choose("Them sinh vien:", a, 5);
 	switch (k) {
 	case 1:
 		svToCls();
@@ -223,6 +245,31 @@ void xem_lop() {
 	system("pause");
 }
 
+void xoaMonHoc() {
+	List<Subject> l = sjInSem(nowYear, nowSem);
+	int t = 0;
+	Node<Subject>* tm = l.head;
+	while (tm != NULL) {
+		cout << ++t << ". " << tm->data.id << endl;
+		tm = tm->next;
+	}
+	cout << "Nhap chi so cua mon can chon: ";
+	int k;
+	cin >> k;
+	cin.ignore();
+	tm = l.head;
+	if (k == 1) {
+		l.head = l.head->next;
+		delete tm;
+		return;
+	}
+	k=k-2;
+	while (k--) tm = tm->next;
+	Node<Subject>* tm2 = tm->next;
+	tm = tm2->next;
+	delete tm2;
+}
+
 void xem_mon() {
 	cout << "Chon mon can xem" << endl;
 	Subject* sj = chonMon();
@@ -279,18 +326,19 @@ void capnhatdiem() {
 	sj->allSt = gradeStFromFile(path);
 }
 
-void menu() {
-	getnew(nowYear, nowSem);
-	int k;
-	system("cls");
-	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
-	printf("1.New\n");
-	printf("2.Xem\n");
-	printf("3.Xuat csv\n");
-	printf("4.Cap nhat diem\n");
-	printf("0.Thoat\n");
-	printf("Nhap lua chon: ");
-	cin >> k;
+
+
+void menuGV() {
+	const char* name = "Menu giao vien";
+	const char* a[6] = {
+		"0.Thoat",
+		"1.New",
+		"2.Xem",
+		"3.Xem",
+		"4.Xuat csv",
+		"5.Cap nhat diem"
+	};
+	int k=choose(name,a, 6);
 	switch (k) {
 	case 1:
 		menu_new();
@@ -299,13 +347,16 @@ void menu() {
 		menu_view();
 		break;
 	case 3:
-		xuatCSV();
+		xoaMonHoc();
 		break;
 	case 4:
+		xuatCSV();
+		break;
+	case 5:
 		capnhatdiem();
 		break;
 	case 0:
 		return;
 	}
-	menu();
+	menuGV();
 }

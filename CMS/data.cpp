@@ -2,6 +2,8 @@
 #include"menu.h"
 
 List<schoolYear> hcmus;
+List<Student> hcmusST;
+List<Lecturer> hcmusLec;
 
 template <typename T>
 void addToList(List<T>& l, T data) { //them 1 phan tu vao List co kieu T
@@ -84,7 +86,6 @@ void add1StToSj(Subject &sj, Student st) {
 
 List<grade> gradeStFromFile(string path) {
 	ifstream fp(path);
-	cout << path;
 	List<grade> tm;
 	if (fp.is_open()) {
 		cout << "baaaaaa";
@@ -95,7 +96,7 @@ List<grade> gradeStFromFile(string path) {
 			string sex;
 			char k;
 			stringstream s(line);
-			if(s.tellp()==0)
+			if (s.tellp() == 0) break;
 			getline(s, g.idx, ',');
 			getline(s, g.st.id, ',');
 			getline(s, g.st.firstName, ',');
@@ -109,6 +110,7 @@ List<grade> gradeStFromFile(string path) {
 			getline(s, g.st.pass, '\n');
 			g.st.sex = (sex == "Nam") ? 0 : 1;
 			addToList<grade>(tm, g);
+			addToList<Student>(hcmusST, g.st);
 		}
 	}
 //	cout << tm.head->data.st.firstName;
@@ -285,7 +287,47 @@ void load_year(string path,string year) {
 	addToList<schoolYear>(hcmus, sc);
 }
 
+void save_lec(string path) {
+	path = path + "/lecInfo.csv";
+	ofstream fo(path);
+	Node<Lecturer>* tm = hcmusLec.head;
+	while (tm != NULL) {
+		fo << tm->data.firstName << ",";
+		fo << tm->data.lastName << ","; 
+		fo << tm->data.degree << ",";
+		fo << tm->data.id << ",";
+		fo << tm->data.cccd << ",";
+		fo << tm->data.field << ",";
+		fo << tm->data.pass << ",";
+		fo << (tm->data.sex==0?"Nam":"Nu") << ",";
+		tm = tm->next;
+	}
+	fo.close();
+}
 
+void load_lec(string path) {
+	ifstream fi(path + "/lecInfo.csv");
+	if (fi.is_open()) {
+		string line;
+		while (getline(fi, line)) {
+			Lecturer g;
+			string sex;
+			stringstream s(line);
+			if (s.tellp() == 0) break;
+			getline(s, g.firstName, ',');
+			getline(s, g.lastName, ',');
+			getline(s, g.degree, ',');
+			getline(s, g.id, ',');
+			getline(s, g.cccd, ',');
+			getline(s, g.field, ',');	
+			getline(s, g.pass, ',');
+			getline(s, sex, '\n');
+			g.sex = (sex == "Nam") ? 0 : 1;
+			addToList<Lecturer>(hcmusLec, g);
+		}
+		fi.close();
+	}
+}
 
 void load_data() {
 	WIN32_FIND_DATA FindFileData;
@@ -306,6 +348,7 @@ void load_data() {
 			load_year(path + "/" + name,name);
 		}
 	}
+	load_lec(path);
 }
 
 void getnew(string &year,int &sem) {
@@ -332,6 +375,15 @@ void getnew(string &year,int &sem) {
 	return;
 }
 
-void createCSV(Subject sj, string path) {
-
+int checkpass(string id, string pass) {
+	Node<Student>* tm = hcmusST.head;
+	while (tm != NULL) {
+		if (tm->data.id == id && tm->data.pass == pass) return 1;
+		tm = tm->next;
+	}
+	Node<Lecturer>* tm1 = hcmusLec.head;
+	while (tm1 != NULL) {
+		if (tm1->data.id == id && tm->data.pass == pass) return 2;
+	}
+	return 0;
 }

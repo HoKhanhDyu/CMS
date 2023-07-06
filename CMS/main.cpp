@@ -4,7 +4,7 @@
 int main() {
 	//menu();
 	load_data();
-	menu();
+	menuGV();
 	save_data();
 	return 0;
 }

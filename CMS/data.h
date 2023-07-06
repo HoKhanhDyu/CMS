@@ -34,7 +34,6 @@ struct Student
 
 struct Lecturer
 {
-	int idx;
 	string firstName, lastName, degree, id, cccd, field, pass;
 	int sex;
 };

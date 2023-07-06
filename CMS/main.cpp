@@ -2,9 +2,8 @@
 #include"data.h"
 
 int main() {
-	//menu();
 	load_data();
-	menuGV();
+	login();
 	save_data();
 	return 0;
 }

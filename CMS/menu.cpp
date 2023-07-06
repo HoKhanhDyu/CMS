@@ -5,10 +5,19 @@
 string nowYear = "2023";
 int nowSem = 2;
 
+void Nocursortype()
+{
+	CONSOLE_CURSOR_INFO Info;
+	Info.bVisible = FALSE;
+	Info.dwSize = 20;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &Info);
+}
+
 int choose(const char* ten, const char* a[], int n) {
 	int ch = 0;
 	while (true) {
 		system("cls");
+		cout << "Nam " << nowYear << " hoc ki " << nowSem << endl<<endl;
 		cout << ten << endl << endl;
 		for (int i = 0; i < n; i++) {
 			if (i == ch) cout << ">>" << a[i] << endl;
@@ -166,30 +175,28 @@ void fileToSJ() {
 
 void menu_themSinhVien() {
 	int k;
-	system("cls");
-	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
 	const char* a[] = {
-	"1.Them 1 sinh vien vao lop",
-	"2.Them 1 sinh vien vao mon hoc",
-	"3.Nhap danh sach sinh vien cho lop",
-	"4.Nhap danh sach sinh vien cho mon hoc",
-	"0.Thoat"
+	"Them 1 sinh vien vao lop",
+	"Them 1 sinh vien vao mon hoc",
+	"Nhap danh sach sinh vien cho lop",
+	"Nhap danh sach sinh vien cho mon hoc",
+	"Thoat"
 	};
 	k=choose("Them sinh vien:", a, 5);
 	switch (k) {
-	case 1:
+	case 0:
 		svToCls();
 		break;
-	case 2:
+	case 1:
 		svToSj();
 		break;
-	case 3:
+	case 2:
 		fileToCls();
 		break;
-	case 4:
+	case 3:
 		fileToSJ();
 		break;
-	case 0:
+	case 4:
 		return;
 	}
 	menu_themSinhVien();
@@ -197,35 +204,33 @@ void menu_themSinhVien() {
 
 void menu_new() {
 	int k;
-	system("cls");
-	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
-	printf("1.Nam hoc\n");
-	printf("2.Hoc ki\n");
-	printf("3.Lop\n");
-	printf("4.Mon hoc\n");
-	printf("5.Sinh vien\n");
-	printf("0.Thoat\n");
-	printf("Nhap lua chon: ");
-	cin >> k;
-	cin.ignore();
+	const char* a[] = {
+	"Nam hoc",
+	"Hoc ki",
+	"Lop",
+	"Mon hoc",
+	"Sinh vien",
+	"Thoat"
+	};
+	k = choose("Menu them:", a, 6);
 	switch (k) {
-	case 1:
+	case 0:
 		themNamHoc();
 		break;
-	case 2:
+	case 1:
 		themHocKi();
 		break;
-	case 3:
+	case 2:
 		themLop();
 		check();
 		break;
-	case 4:
+	case 3:
 		themMonHoc();
 		break;
-	case 5:
+	case 4:
 		menu_themSinhVien();
 		break;
-	case 0:
+	case 5:
 		return;
 	}
 	menu_new();
@@ -287,21 +292,20 @@ void xem_mon() {
 
 void menu_view() {
 	int k;
-	system("cls");
-	cout << "Nam hoc hien tai la " << nowYear << " hoc ki " << nowSem << endl;
-	printf("1.Lop hoc\n");
-	printf("2.Mon hoc\n");
-	printf("0.Thoat\n");
-	printf("Nhap lua chon: ");
-	cin >> k;
+	const char* a[]{
+	"Lop hoc",
+	"Mon hoc",
+	"Thoat"
+	};
+	k=choose("Xem mon va lop:", a, 3);
 	switch (k) {
-	case 1:
+	case 0:
 		xem_lop();
 		break;
-	case 2:
+	case 1:
 		xem_mon();
 		break;
-	case 0:
+	case 2:
 		return;
 	}
 	menu_view();
@@ -331,32 +335,130 @@ void capnhatdiem() {
 void menuGV() {
 	const char* name = "Menu giao vien";
 	const char* a[6] = {
-		"0.Thoat",
-		"1.New",
-		"2.Xem",
-		"3.Xem",
-		"4.Xuat csv",
-		"5.Cap nhat diem"
+		"New",
+		"Xem",
+		"Xoa",
+		"Xuat csv",
+		"Cap nhat diem",
+		"Thoat"
 	};
 	int k=choose(name,a, 6);
 	switch (k) {
-	case 1:
+	case 0:
 		menu_new();
 		break;
-	case 2:
+	case 1:
 		menu_view();
 		break;
-	case 3:
+	case 2:
 		xoaMonHoc();
 		break;
-	case 4:
+	case 3:
 		xuatCSV();
 		break;
-	case 5:
+	case 4:
 		capnhatdiem();
 		break;
-	case 0:
+	case 5:
 		return;
 	}
 	menuGV();
+}
+
+void changepass(string id) {
+	string pass, pass1, pass2;
+	do {
+		system("cls");
+		cout << "Nhap mat khau cu:";
+		getline(cin, pass);
+		cout << "Nhap mat khau moi:";
+		getline(cin, pass1);
+		cout << "Xac nhan mat khau:";
+		getline(cin, pass2);
+		if (pass1 != pass2) {
+			cout << "Mat khau khong khop!!!" << endl;
+			system("pause");
+			continue;
+		}
+		else if (changepass(id, pass, pass1)) {
+			cout << "Doi mat khau thanh cong!";
+			system("pause");
+			break;
+		}
+		else cout << "Sai mat khau!";
+		system("pause");
+	} while (true);
+}
+
+void xemSJ(string id) {
+	system("cls");
+	cout << "Danh sach mon hoc:" << endl;
+	List<SVSJ> k = getSJ(id, nowYear, nowSem);
+	Node<SVSJ>* tm = k.head;
+	int t = 0;
+	while (tm != NULL) {
+		cout << ++t << ". " << tm->data.name;
+		tm = tm->next;
+	}
+	system("pause");
+}
+
+void xemDiem(string id) {
+	system("cls");
+	cout << "Diem mon hoc:" << endl;
+	List<SVSJ> k = getSJ(id, nowYear, nowSem);
+	Node<SVSJ>* tm = k.head;
+	int t = 0;
+	while (tm != NULL) {
+		t++;
+		scanf("%4d. %s|%f|%f|%f|%f",t,tm->data.name.c_str(),tm->data.OP,tm->data.MP,tm->data.FP,tm->data.MP*0.25+tm->data.FP*0.5+tm->data.OP*0.25);
+		tm = tm->next;
+	}
+	system("pause");
+}
+
+void menuSV(string id) {
+	const char* a[] = {
+		"Doi mat khau",
+		"Xem khoa hoc",
+		"Xem diem",
+		"Thoat"
+	};
+	int k = choose("Menu sinh vien:", a, 4);
+	switch (k)
+	{
+	case 0:
+		changepass(id);
+		break;
+	case 1:
+		xemSJ(id);
+		break;
+	case 2:
+		xemDiem(id);
+		break;
+	case 3:
+		return;
+		break;
+	}
+	menuSV(id);
+}
+
+void login() {
+	int k = -1;
+	string id, pass;
+	do {
+		system("cls");
+		cout << "Nhap id: ";
+		getline(cin, id);
+		cout << "Nhap mat khau: ";
+		getline(cin, pass);
+		k = checkpass(id, pass);
+		if (k == 0) {
+			cout << "Sai mat khau vui long nhap lai!!!!" << endl;
+			system("pause");
+		}
+	} while (k == 0);
+	Nocursortype();
+	if (k == 2) menuGV();
+	else menuSV(id);
 }

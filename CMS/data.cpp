@@ -2,8 +2,7 @@
 #include"menu.h"
 
 List<schoolYear> hcmus;
-List<Student> hcmusST;
-List<Lecturer> hcmusLec;
+List<tk> hcmusTK;
 
 template <typename T>
 void addToList(List<T>& l, T data) { //them 1 phan tu vao List co kieu T
@@ -84,14 +83,23 @@ void add1StToSj(Subject &sj, Student st) {
 	addToList<grade>(sj.allSt, tm);
 }
 
+bool checktk(string id) {
+	Node<tk> *tm= hcmusTK.head;
+	while (tm != NULL) {
+		if (tm->data.id == id) return true;
+		tm = tm->next;
+	}
+	return true;
+}
+
 List<grade> gradeStFromFile(string path) {
 	ifstream fp(path);
 	List<grade> tm;
 	if (fp.is_open()) {
-		cout << "baaaaaa";
+		//cout << "baaaaaa";
 		string line;
 		while (getline(fp, line)) {
-			cout << "hi";
+			//cout << "hi";
 			grade g;
 			string sex;
 			char k;
@@ -103,14 +111,19 @@ List<grade> gradeStFromFile(string path) {
 			getline(s, g.st.lastName, ',');
 			getline(s, g.st.className, ',');
 			getline(s, g.st.cccd, ',');
-			s >> g.st.age>>k;
+			s >> g.st.age >> k >> g.MP >> k >> g.FP >> k >> g.OP >> k;
 			getline(s, g.st.address, ',');
 			getline(s, g.st.birth, ',');
 			getline(s, sex, ',');
 			getline(s, g.st.pass, '\n');
 			g.st.sex = (sex == "Nam") ? 0 : 1;
 			addToList<grade>(tm, g);
-			addToList<Student>(hcmusST, g.st);
+			if (!checktk(g.st.id)) {
+				tk tm;
+				tm.id = g.st.id;
+				tm.id = 1;
+				addToList<tk>(hcmusTK, tm);
+			}
 		}
 	}
 //	cout << tm.head->data.st.firstName;
@@ -154,6 +167,9 @@ void gradeToCSV(string path, List<grade> s) {
 		fo << tm->data.st.className << ",";
 		fo << tm->data.st.cccd << ",";
 		fo << tm->data.st.age << ",";
+		fo << tm->data.MP << ",";
+		fo << tm->data.FP << ",";
+		fo << tm->data.OP << ",";
 		fo << tm->data.st.address << ",";
 		fo << tm->data.st.birth << ",";
 		fo << tm->data.st.sex << ",";
@@ -197,6 +213,21 @@ void ghiSem(string path, Semester sem) {
 	fo.close();
 }
 
+
+void save_tk(string path) {
+	path = path + "/TK.csv";
+	ofstream fo(path);
+	Node<tk>* tm = hcmusTK.head;
+	while (tm != NULL) {
+		fo << tm->data.id << ",";
+		fo << tm->data.pass << ",";
+		fo << tm->data.cv << endl;
+		tm = tm->next;
+	}
+	fo.close();
+}
+
+
 void save_data() {
 	Node<schoolYear>* tm = hcmus.head;
 	string path = "data";
@@ -213,7 +244,9 @@ void save_data() {
 		}
 		tm = tm->next;
 	}
-	cout << "daluu";
+	save_tk(path);
+	system("cls");
+	cout << "Da luu du lieu thanh cong!"<<endl<<"Tam biet!";
 }
 
 
@@ -287,43 +320,21 @@ void load_year(string path,string year) {
 	addToList<schoolYear>(hcmus, sc);
 }
 
-void save_lec(string path) {
-	path = path + "/lecInfo.csv";
-	ofstream fo(path);
-	Node<Lecturer>* tm = hcmusLec.head;
-	while (tm != NULL) {
-		fo << tm->data.firstName << ",";
-		fo << tm->data.lastName << ","; 
-		fo << tm->data.degree << ",";
-		fo << tm->data.id << ",";
-		fo << tm->data.cccd << ",";
-		fo << tm->data.field << ",";
-		fo << tm->data.pass << ",";
-		fo << (tm->data.sex==0?"Nam":"Nu") << ",";
-		tm = tm->next;
-	}
-	fo.close();
-}
-
-void load_lec(string path) {
-	ifstream fi(path + "/lecInfo.csv");
+void load_tk(string path) {
+	ifstream fi(path + "/TK.csv");
+	
 	if (fi.is_open()) {
 		string line;
 		while (getline(fi, line)) {
-			Lecturer g;
-			string sex;
+			tk g;
+			if (line == "") break;
 			stringstream s(line);
-			if (s.tellp() == 0) break;
-			getline(s, g.firstName, ',');
-			getline(s, g.lastName, ',');
-			getline(s, g.degree, ',');
 			getline(s, g.id, ',');
-			getline(s, g.cccd, ',');
-			getline(s, g.field, ',');	
 			getline(s, g.pass, ',');
-			getline(s, sex, '\n');
-			g.sex = (sex == "Nam") ? 0 : 1;
-			addToList<Lecturer>(hcmusLec, g);
+			getline(s, g.cv, '\n');
+			addToList<tk>(hcmusTK, g);
+			cout << g.id;
+			//system("pause");
 		}
 		fi.close();
 	}
@@ -334,6 +345,7 @@ void load_data() {
 	HANDLE hFind;
 
 	string path = "data";
+	load_tk(path);
 	string pa = path + "/*.*";
 	wstring ws(pa.begin(), pa.end());
 	LPCWSTR k = ws.c_str();	
@@ -343,12 +355,11 @@ void load_data() {
 	cout << s << endl;
 	while (FindNextFile(hFind, &FindFileData)) {
 		string name = toS(FindFileData.cFileName);
-		if (name != "..") {
+		if (name != ".."&&name!="TK.csv") {
 			cout << name << endl;
 			load_year(path + "/" + name,name);
 		}
 	}
-	load_lec(path);
 }
 
 void getnew(string &year,int &sem) {
@@ -376,14 +387,46 @@ void getnew(string &year,int &sem) {
 }
 
 int checkpass(string id, string pass) {
-	Node<Student>* tm = hcmusST.head;
+	Node<tk>* tm = hcmusTK.head;
 	while (tm != NULL) {
-		if (tm->data.id == id && tm->data.pass == pass) return 1;
+		if (tm->data.id == id && tm->data.pass == pass) return stoi(tm->data.cv);
 		tm = tm->next;
 	}
-	Node<Lecturer>* tm1 = hcmusLec.head;
-	while (tm1 != NULL) {
-		if (tm1->data.id == id && tm->data.pass == pass) return 2;
-	}
 	return 0;
+}
+
+bool changepass(string id, string pass, string newpass) {
+	Node<tk>* tm = hcmusTK.head;
+	while (tm != NULL) {
+		if (tm->data.id == id && tm->data.pass == pass) {
+			tm->data.pass = newpass;
+			return true;
+		}
+		tm = tm->next;
+	}
+	return false;
+}
+
+List<SVSJ> getSJ(string id,string year,int sem) {
+	List<Subject> l = sjInSem(year, sem);
+	List<SVSJ> k;
+	Node<Subject>* tm = l.head;
+	while (tm != NULL) {
+		List<grade> l1 = tm->data.allSt;
+		Node<grade>* tm1 = l1.head;
+		while (tm1 != NULL) {
+			if (tm1->data.st.id == id) {
+				SVSJ t;
+				t.name = tm->data.course_name;
+				t.FP = tm1->data.FP;
+				t.MP = tm1->data.MP;
+				t.OP = tm1->data.OP;
+				addToList<SVSJ>(k, t);
+				break;
+			}
+			tm1 = tm1->next;
+		}
+		tm = tm->next;
+	}
+	return k;
 }

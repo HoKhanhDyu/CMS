@@ -8,4 +8,6 @@
 using namespace std;
 
 void menu();
+void Nocursortype();
 void menuGV();
+void login();

@@ -41,7 +41,7 @@ struct Lecturer
 struct grade {
 	string idx;
 	Student st;
-	double GPA, MP, FP, OP;
+	double MP, FP, OP;
 };
 
 struct Class {
@@ -69,6 +69,15 @@ struct schoolYear {
 	List<Class> cls;
 };
 
+struct tk {
+	string id, pass="abc", cv;
+};
+
+struct SVSJ {
+	string name;
+	double MP, FP, OP;
+};
+
 void addYear(string year);
 void addSem(string year, int sem, Semester s);
 void addClass(string year, Class cls);
@@ -84,5 +93,8 @@ void save_data();
 void getnew(string& year, int& sem);
 void gradeToCSV(string path, List<grade> s);
 List<grade> gradeStFromFile(string path);
+int checkpass(string id, string pass);
+bool changepass(string id, string pass, string newpass);
+List<SVSJ> getSJ(string id, string year, int sem);
 
 void check();

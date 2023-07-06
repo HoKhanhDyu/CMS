@@ -30,11 +30,15 @@ int choose(const char* ten, const char* a[], int n) {
 		if (k == 72) {
 			ch = (ch + n - 1) % n;
 		}
-		if (k == 13) return ch;
+		if (k == 13) {
+			cin.ignore();
+			return ch;
+		}
 	}
 }
 
 Class* chonLop() {
+	system("cls");
 	List<Class> l = clsInYear(nowYear);
 	int t = 0;
 	Node<Class>* tm = l.head;
@@ -53,11 +57,12 @@ Class* chonLop() {
 }
 
 Subject* chonMon() {
+	system("cls");
 	List<Subject> l = sjInSem(nowYear,nowSem);
 	int t = 0;
 	Node<Subject>* tm = l.head;
 	while (tm != NULL) {
-		cout << ++t << ". " << tm->data.id<<endl;
+		cout << ++t << ". " << tm->data.course_name<<endl;
 		tm = tm->next;
 	}
 	cout << "Nhap chi so cua mon can chon: ";
@@ -72,6 +77,7 @@ Subject* chonMon() {
 
 void themNamHoc() {
 	string year;
+	system("cls");
 	cout << "Nhap nam can tao: ";
 	cin >> year;
 	addYear(year);
@@ -80,6 +86,7 @@ void themNamHoc() {
 }
 
 void themHocKi() {
+	system("cls");
 	cout << "Hien la nam " << nowYear << " hoc ki " << nowSem << endl;
 	cout << "Nhap hoc ki can them: ";
 	int sem;
@@ -94,6 +101,7 @@ void themHocKi() {
 }
 
 void themLop() {
+	system("cls"); 
 	Class cls;
 	cout << "Nhap ten lop: ";
 	cin >> cls.id;
@@ -102,6 +110,7 @@ void themLop() {
 
 void themMonHoc() {
 	Subject tm;
+	system("cls");
 	cout << "Nhap ma khoa hoc: ";
 	getline(cin, tm.id);
 	cout << "Nhap ten khoa hoc: ";
@@ -140,6 +149,7 @@ Student getAStudent() {
 }
 
 void svToCls() {
+	system("cls");
 	cout << "Chon lop can them" << endl;
 	Class* cls = chonLop();
 	cout << "Nhap thong tin tin vien can them: " << endl;
@@ -148,6 +158,7 @@ void svToCls() {
 }
 
 void svToSj() {
+	system("cls");
 	cout << "Chon mon can them" << endl;
 	Subject* sj = chonMon();
 	cout << "Nhap thong tin tin vien can them: " << endl;
@@ -156,6 +167,7 @@ void svToSj() {
 }
 
 void fileToCls() {
+	system("cls");
 	cout << "Chon lop can them" << endl;
 	Class* cls = chonLop();
 	string path;
@@ -165,6 +177,7 @@ void fileToCls() {
 }
 
 void fileToSJ() {
+	system("cls");
 	cout << "Chon mon can them" << endl;
 	Subject* sj = chonMon();
 	string path;
@@ -243,6 +256,7 @@ void xem_lop() {
 	cout << "Danh sach lop " << cls->id << endl;
 	Node<grade>* tm = cls->allSt.head;
 	int k = 0;
+	cout << cls->allSt.head->data.st.lastName;
 	while (tm != NULL) {
 		cout << ++k << ". " << tm->data.st.lastName<<endl;
 		tm = tm->next;
@@ -397,7 +411,7 @@ void xemSJ(string id) {
 	Node<SVSJ>* tm = k.head;
 	int t = 0;
 	while (tm != NULL) {
-		cout << ++t << ". " << tm->data.name;
+		cout << ++t << ". " << tm->data.name<<endl;
 		tm = tm->next;
 	}
 	system("pause");
@@ -411,7 +425,7 @@ void xemDiem(string id) {
 	int t = 0;
 	while (tm != NULL) {
 		t++;
-		scanf("%4d. %s|%f|%f|%f|%f",t,tm->data.name.c_str(),tm->data.OP,tm->data.MP,tm->data.FP,tm->data.MP*0.25+tm->data.FP*0.5+tm->data.OP*0.25);
+		printf("%4d. %s|%f|%f|%f|%f\n",t,tm->data.name.c_str(),tm->data.OP,tm->data.MP,tm->data.FP,tm->data.MP*0.25+tm->data.FP*0.5+tm->data.OP*0.25);
 		tm = tm->next;
 	}
 	system("pause");
@@ -444,6 +458,7 @@ void menuSV(string id) {
 }
 
 void login() {
+	getnew(nowYear, nowSem);
 	int k = -1;
 	string id, pass;
 	do {
@@ -459,6 +474,7 @@ void login() {
 		}
 	} while (k == 0);
 	Nocursortype();
+	cin.ignore();
 	if (k == 2) menuGV();
 	else menuSV(id);
 }

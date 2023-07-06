@@ -58,7 +58,7 @@ void addSubject(string year, int sem, Subject sj) {
 void check() {
 	cout << hcmus.head->data.year << endl;
 	cout << hcmus.head->data.cls.head->data.id;
-	system("pause");
+	 
 }
 
 List<Class> clsInYear(string year) {
@@ -96,6 +96,8 @@ List<grade> gradeStFromFile(string path) {
 	ifstream fp(path);
 	List<grade> tm;
 	if (fp.is_open()) {
+		cout << path<<"hihi";
+		 
 		//cout << "baaaaaa";
 		string line;
 		while (getline(fp, line)) {
@@ -103,8 +105,8 @@ List<grade> gradeStFromFile(string path) {
 			grade g;
 			string sex;
 			char k;
+			if (line == "") break;
 			stringstream s(line);
-			if (s.tellp() == 0) break;
 			getline(s, g.idx, ',');
 			getline(s, g.st.id, ',');
 			getline(s, g.st.firstName, ',');
@@ -172,7 +174,7 @@ void gradeToCSV(string path, List<grade> s) {
 		fo << tm->data.OP << ",";
 		fo << tm->data.st.address << ",";
 		fo << tm->data.st.birth << ",";
-		fo << tm->data.st.sex << ",";
+		fo << (tm->data.st.sex==0?"Nam":"Nu") << ",";
 		fo << tm->data.st.pass << endl;
 		tm = tm->next;
 	}
@@ -268,6 +270,7 @@ Semester load_sem(string path) {
 		getline(s, sem.begin, ',');
 		getline(s, sem.end, '\n');
 		while (getline(fi, line)) {
+			if (line == "") break;
 			stringstream s(line);
 			Subject sj;
 			getline(s, sj.id, ',');
@@ -281,6 +284,7 @@ Semester load_sem(string path) {
 			s >> tm;
 			s >> sj.credits;
 			sj.allSt = gradeStFromFile(path+"/"+sj.id+".csv");
+			addToList<Subject>(sem.sj, sj);
 		}
 		fi.close();
 	}
@@ -297,13 +301,16 @@ void load_cls(string path,List<Class> &l) {
 	ifstream fi(path + "/infoCls.csv");
 	if (fi.fail()) cout << path;
 	while (!fi.eof()) {
+		 
 		Class cls;
 		getline(fi, cls.id);
-		cout << cls.id << endl;
+		if (cls.id == "") break;
 		//int h;
 		//cin >> h;
 		cls.allSt = gradeStFromFile(path + "/" + cls.id + ".csv");
-		if(cls.id!="")addToList<Class>(l, cls);
+		cout << cls.allSt.head->data.st.firstName;
+		 
+		if(cls.id!="") addToList<Class>(l, cls);
 	}
 	fi.close();
 }
@@ -318,6 +325,7 @@ void load_year(string path,string year) {
 	cout << "hi";
 	load_cls(path + "/class",sc.cls);
 	addToList<schoolYear>(hcmus, sc);
+	 
 }
 
 void load_tk(string path) {
@@ -334,7 +342,7 @@ void load_tk(string path) {
 			getline(s, g.cv, '\n');
 			addToList<tk>(hcmusTK, g);
 			cout << g.id;
-			//system("pause");
+			// 
 		}
 		fi.close();
 	}
@@ -377,7 +385,7 @@ void getnew(string &year,int &sem) {
 	}
 	year = to_string(t);
 	cout << year;
-	system("pause");
+	 
 	for(int i=3;i>=1;i--)
 		if (sc.smt[i].open) {
 			sem = i;

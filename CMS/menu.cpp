@@ -256,15 +256,16 @@ void xem_lop() {
 	cout << "Danh sach lop " << cls->id << endl;
 	Node<grade>* tm = cls->allSt.head;
 	int k = 0;
-	cout << cls->allSt.head->data.st.lastName;
+	//cout << cls->allSt.head->data.st.lastName;
 	while (tm != NULL) {
-		cout << ++k << ". " << tm->data.st.lastName<<endl;
+		cout << ++k << ". " <<tm->data.st.firstName<<" "<< tm->data.st.lastName << endl;
 		tm = tm->next;
 	}
 	system("pause");
 }
 
 void xoaMonHoc() {
+	system("cls");
 	List<Subject> l = sjInSem(nowYear, nowSem);
 	int t = 0;
 	Node<Subject>* tm = l.head;
@@ -285,7 +286,7 @@ void xoaMonHoc() {
 	k=k-2;
 	while (k--) tm = tm->next;
 	Node<Subject>* tm2 = tm->next;
-	tm = tm2->next;
+	tm->next = tm2->next;
 	delete tm2;
 }
 
@@ -297,7 +298,7 @@ void xem_mon() {
 	Node<grade>* tm = sj->allSt.head;
 	int k = 0;
 	while (tm != NULL) {
-		cout << ++k << ". " << tm->data.st.lastName << endl;
+		cout << ++k << ". "<<tm->data.st.firstName<<" " << tm->data.st.lastName << endl;
 		tm = tm->next;
 	}
 	system("pause");
@@ -338,7 +339,7 @@ void xuatCSV() {
 void capnhatdiem() {
 	cout << "Chon mon can nhap" << endl;
 	Subject* sj = chonMon();
-	cout << "Nhap dia chi cua file";
+	cout << "Nhap dia chi cua file: ";
 	string path;
 	getline(cin, path);
 	sj->allSt = gradeStFromFile(path);
@@ -349,9 +350,9 @@ void capnhatdiem() {
 void menuGV() {
 	const char* name = "Menu giao vien";
 	const char* a[6] = {
-		"New",
-		"Xem",
-		"Xoa",
+		"Them",
+		"Xem sinh vien",
+		"Xoa mon hoc",
 		"Xuat csv",
 		"Cap nhat diem",
 		"Thoat"
